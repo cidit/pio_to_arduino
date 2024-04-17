@@ -30,7 +30,7 @@ fn main() -> anyhow::Result<()> {
     let mut zip = ZipWriter::new(out_file_name);
     let file_options = FileOptions::default().compression_method(zip::CompressionMethod::Stored);
 
-    zip.start_file("libraries", file_options)?;
+    zip.start_file("libraries.txt", file_options)?;
     let Ok(project_metadata) = fs::read_to_string(project_dir.join("platformio.ini")) else {
         panic!("Not a PIO")
     };
@@ -39,6 +39,7 @@ fn main() -> anyhow::Result<()> {
         .skip_while(|l| !l.contains("lib_deps"))
         .skip(1)
         .map(|s| s.trim())
+        .map(|s| format!("{s}\n"))
         .collect();
     zip.write(libraries.as_bytes())?;
 
